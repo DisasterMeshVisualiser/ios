@@ -1,0 +1,10 @@
+PODS:
+  - GoogleMaps (1.12.1)
+
+DEPENDENCIES:
+  - GoogleMaps
+
+SPEC CHECKSUMS:
+  GoogleMaps: d4e7526e96e78faf7131ea95f13dd5411cc2916d
+
+COCOAPODS: 0.39.0
