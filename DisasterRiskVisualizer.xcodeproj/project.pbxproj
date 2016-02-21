@@ -13,6 +13,7 @@
 		3D14790C1C79982D00D06DCE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D14790B1C79982D00D06DCE /* Assets.xcassets */; };
 		3D14790F1C79982D00D06DCE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D14790D1C79982D00D06DCE /* LaunchScreen.storyboard */; };
 		3DE15A241C79C160008867CE /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE15A231C79C160008867CE /* MapViewController.swift */; };
+		3DEE24D71C79D8A3003D1C72 /* Meshcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DEE24D61C79D8A3003D1C72 /* Meshcode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		3D14790E1C79982D00D06DCE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3D1479101C79982D00D06DCE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3DE15A231C79C160008867CE /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		3DEE24D61C79D8A3003D1C72 /* Meshcode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Meshcode.swift; sourceTree = "<group>"; };
 		5705DE90CFBC9584B45C82FD /* libPods-DisasterRiskVisualizer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DisasterRiskVisualizer.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7ADAB632EBDF779A0AF829E /* Pods-DisasterRiskVisualizer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DisasterRiskVisualizer.release.xcconfig"; path = "Pods/Target Support Files/Pods-DisasterRiskVisualizer/Pods-DisasterRiskVisualizer.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -71,6 +73,7 @@
 			children = (
 				3D1479041C79982D00D06DCE /* AppDelegate.swift */,
 				3DE15A231C79C160008867CE /* MapViewController.swift */,
+				3DEE24D61C79D8A3003D1C72 /* Meshcode.swift */,
 				3D1479081C79982D00D06DCE /* Main.storyboard */,
 				3D14790B1C79982D00D06DCE /* Assets.xcassets */,
 				3D14790D1C79982D00D06DCE /* LaunchScreen.storyboard */,
@@ -213,6 +216,7 @@
 			files = (
 				3D1479051C79982D00D06DCE /* AppDelegate.swift in Sources */,
 				3DE15A241C79C160008867CE /* MapViewController.swift in Sources */,
+				3DEE24D71C79D8A3003D1C72 /* Meshcode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
