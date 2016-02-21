@@ -8,17 +8,21 @@
 
 import UIKit
 import GoogleMaps
+import CoreLocation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	var window: UIWindow?
 	
+	let locationManager = CLLocationManager()
+	
 	let cGoogleMapsAPIKey = "AIzaSyBaQCf7E9wIAJB-xbkjpoO1lJCegDLHN8M"
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		// Override point for customization after application launch.
 		GMSServices.provideAPIKey(cGoogleMapsAPIKey)
+		locationManager.requestAlwaysAuthorization()
 		return true
 	}
 

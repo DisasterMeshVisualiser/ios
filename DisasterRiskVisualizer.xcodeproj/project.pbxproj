@@ -9,21 +9,21 @@
 /* Begin PBXBuildFile section */
 		2E8CD8A6D6DCDC90764AF75D /* libPods-DisasterRiskVisualizer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5705DE90CFBC9584B45C82FD /* libPods-DisasterRiskVisualizer.a */; };
 		3D1479051C79982D00D06DCE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1479041C79982D00D06DCE /* AppDelegate.swift */; };
-		3D1479071C79982D00D06DCE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D1479061C79982D00D06DCE /* ViewController.swift */; };
 		3D14790A1C79982D00D06DCE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D1479081C79982D00D06DCE /* Main.storyboard */; };
 		3D14790C1C79982D00D06DCE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3D14790B1C79982D00D06DCE /* Assets.xcassets */; };
 		3D14790F1C79982D00D06DCE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D14790D1C79982D00D06DCE /* LaunchScreen.storyboard */; };
+		3DE15A241C79C160008867CE /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DE15A231C79C160008867CE /* MapViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		2629680EBBD907161D91E899 /* Pods-DisasterRiskVisualizer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DisasterRiskVisualizer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DisasterRiskVisualizer/Pods-DisasterRiskVisualizer.debug.xcconfig"; sourceTree = "<group>"; };
 		3D1479011C79982D00D06DCE /* DisasterRiskVisualizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DisasterRiskVisualizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D1479041C79982D00D06DCE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		3D1479061C79982D00D06DCE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		3D1479091C79982D00D06DCE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3D14790B1C79982D00D06DCE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3D14790E1C79982D00D06DCE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3D1479101C79982D00D06DCE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3DE15A231C79C160008867CE /* MapViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		5705DE90CFBC9584B45C82FD /* libPods-DisasterRiskVisualizer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DisasterRiskVisualizer.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A7ADAB632EBDF779A0AF829E /* Pods-DisasterRiskVisualizer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DisasterRiskVisualizer.release.xcconfig"; path = "Pods/Target Support Files/Pods-DisasterRiskVisualizer/Pods-DisasterRiskVisualizer.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,7 +70,7 @@
 			isa = PBXGroup;
 			children = (
 				3D1479041C79982D00D06DCE /* AppDelegate.swift */,
-				3D1479061C79982D00D06DCE /* ViewController.swift */,
+				3DE15A231C79C160008867CE /* MapViewController.swift */,
 				3D1479081C79982D00D06DCE /* Main.storyboard */,
 				3D14790B1C79982D00D06DCE /* Assets.xcassets */,
 				3D14790D1C79982D00D06DCE /* LaunchScreen.storyboard */,
@@ -211,8 +211,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3D1479071C79982D00D06DCE /* ViewController.swift in Sources */,
 				3D1479051C79982D00D06DCE /* AppDelegate.swift in Sources */,
+				3DE15A241C79C160008867CE /* MapViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
