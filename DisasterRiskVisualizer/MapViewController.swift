@@ -31,6 +31,17 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		marker.snippet = "\(coordinate.latitude),\(coordinate.longitude)"
 		marker.title = meshcode
 		marker.map = googleMap
+		
+		let rect = GMSMutablePath()
+		for latlng in Meshcode.meshcodeToLatlng(meshcode) {
+			rect.addCoordinate(latlng)
+		}
+		
+		let polygon = GMSPolygon(path: rect)
+		polygon.fillColor = UIColor(red:0.25, green:0, blue:0, alpha:0.5);
+		polygon.strokeColor = UIColor.redColor()
+		polygon.strokeWidth = 2
+		polygon.map = mapView
 	}
 	
 }
