@@ -15,7 +15,7 @@ enum MeshScale {
 
 class Meshcode {
 	
-	static func meshcodeToLatlng(meshcode: String) -> [CLLocationCoordinate2D] {
+	static func meshcodeToLatlng(meshcode: String, scale: MeshScale) -> [CLLocationCoordinate2D] {
 		let length = meshcode.characters.count
 		var lat = 0.0
 		var lng = 0.0
@@ -23,21 +23,21 @@ class Meshcode {
 		let d = Double((meshcode as NSString).substringWithRange(NSRange(location: 2, length: 2)))!
 		lat = a / 1.5
 		lng = d + 100
-		if (length == 4) {
+		if (length == 4 || scale == .Mesh1) {
 			return calcCoordinates(lat: lat, lng: lng, latD: 2.0 / 3, lngD: 1)
 		}
 		let b = Double((meshcode as NSString).substringWithRange(NSRange(location: 4, length: 1)))!
 		let e = Double((meshcode as NSString).substringWithRange(NSRange(location: 5, length: 1)))!
 		lat += b * 5 / 60
 		lng += e * 7.5 / 60
-		if (length == 6) {
+		if (length == 6 || scale == .Mesh2) {
 			return calcCoordinates(lat: lat, lng: lng, latD: 5.0 / 60, lngD: 7.5 / 60)
 		}
 		let c = Double((meshcode as NSString).substringWithRange(NSRange(location: 6, length: 1)))!
 		let f = Double((meshcode as NSString).substringWithRange(NSRange(location: 7, length: 1)))!
 		lat += c * 30 / 3600
 		lng += f * 45 / 3600
-		if (length == 8) {
+		if (length == 8 || scale == .Mesh3) {
 			return calcCoordinates(lat: lat, lng: lng, latD: 30.0 / 3600, lngD: 45.0 / 3600)
 		}
 		let g = Double((meshcode as NSString).substringWithRange(NSRange(location: 8, length: 1)))!
@@ -47,7 +47,7 @@ class Meshcode {
 		if g == 2 || g == 4 {
 			lng += 22.5 / 3600
 		}
-		if (length == 9) {
+		if (length == 9 || scale == .Mesh4) {
 			return calcCoordinates(lat: lat, lng: lng, latD: 15.0 / 3600, lngD: 22.5 / 3600)
 		}
 		let h = Double((meshcode as NSString).substringWithRange(NSRange(location: 9, length: 1)))!
@@ -57,7 +57,7 @@ class Meshcode {
 		if h == 2 || h == 4 {
 			lng += 11.25 / 3600
 		}
-		if (length == 10) {
+		if (length == 10 || scale == .Mesh5) {
 			return calcCoordinates(lat: lat, lng: lng, latD: 7.5 / 3600, lngD: 11.25 / 3600)
 		}
 		return []
