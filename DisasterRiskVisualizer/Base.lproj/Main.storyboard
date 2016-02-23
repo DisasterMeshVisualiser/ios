@@ -6,7 +6,7 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--防災マップ-->
+        <!--Map-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="MapViewController" customModule="DisasterRiskVisualizer" customModuleProvider="target" sceneMemberID="viewController">
@@ -18,7 +18,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yc7-tZ-pJJ" customClass="GMSMapView">
+                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yc7-tZ-pJJ" customClass="GMSMapView">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <color key="backgroundColor" red="0.0" green="0.67450980390000004" blue="0.87058823529999996" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                             </view>
@@ -31,14 +31,14 @@
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="yc7-tZ-pJJ" secondAttribute="bottom" id="zU2-ds-Zci"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="防災マップ" id="Yg2-Nl-jWS"/>
+                    <navigationItem key="navigationItem" title="Map" id="Yg2-Nl-jWS"/>
                     <connections>
                         <outlet property="googleMap" destination="yc7-tZ-pJJ" id="tZR-E3-dBp"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1419" y="547"/>
+            <point key="canvasLocation" x="3043" y="547"/>
         </scene>
     </scenes>
 </document>

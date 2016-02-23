@@ -32,10 +32,8 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		googleMap.settings.myLocationButton = true
 		googleMap.setMinZoom(4, maxZoom: 21)
 		googleMap.settings.rotateGestures = false
-	}
-	
-	func mapView(mapView: GMSMapView!, idleAtCameraPosition position: GMSCameraPosition!) {
-		reloadLines()
+		googleMap.settings.indoorPicker = false
+		googleMap.settings.tiltGestures = false
 	}
 	
 	func mapView(mapView: GMSMapView!, didChangeCameraPosition position: GMSCameraPosition!) {
@@ -46,6 +44,7 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		if position.zoom >= 14 {
 			createLatLngLine()
 		}
+		reloadLines()
 	}
 	
 	func createLatLngLine() {
@@ -56,25 +55,25 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		let maxLng = region.farRight.longitude
 		
 		for i in 122 * 320...154 * 320 {
-			if Double(i) / 320 < (minLng - 0.05) { continue }
-			if (maxLng + 0.05) < Double(i) / 320 { continue }
+			if Double(i) / 320 < minLng - 0.05 { continue }
+			if maxLng < Double(i) / 320 { continue }
 			let path = GMSMutablePath()
-			path.addCoordinate(CLLocationCoordinate2DMake(minLat, Double(i) / 320))
-			path.addCoordinate(CLLocationCoordinate2DMake(maxLat, Double(i) / 320))
+			path.addCoordinate(CLLocationCoordinate2DMake(minLat - 1, Double(i) / 320))
+			path.addCoordinate(CLLocationCoordinate2DMake(maxLat + 1, Double(i) / 320))
 			let line = GMSPolyline(path: path)
-			line.strokeColor = UIColor.blueColor()
+			line.strokeColor = UIColor.brownColor()
 			line.strokeWidth = 1
 			line.map = googleMap
 			latlngLines.append(line)
 		}
 		for i in 20 * 480...46 * 480 {
-			if Double(i) / 480 < (minLat - 0.075) { continue }
-			if (maxLat + 0.075) < Double(i) / 480 { continue }
+			if Double(i) / 480 < minLat { continue }
+			if maxLat < Double(i) / 480 { continue }
 			let path = GMSMutablePath()
-			path.addCoordinate(CLLocationCoordinate2DMake(Double(i) / 480, minLng))
-			path.addCoordinate(CLLocationCoordinate2DMake(Double(i) / 480, maxLng))
+			path.addCoordinate(CLLocationCoordinate2DMake(Double(i) / 480, minLng - 1))
+			path.addCoordinate(CLLocationCoordinate2DMake(Double(i) / 480, maxLng + 1))
 			let line = GMSPolyline(path: path)
-			line.strokeColor = UIColor.blueColor()
+			line.strokeColor = UIColor.brownColor()
 			line.strokeWidth = 1
 			line.map = googleMap
 			latlngLines.append(line)
@@ -82,7 +81,11 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 	}
 	
 	func reloadLines() {
-		guard let meshcode = selectedMeshCode else { return }
+		guard let meshcode = selectedMeshCode else {
+			selectedPolyLine?.map = nil
+			return
+		}
+		selectedPolyLine?.map = nil
 		if googleMap.camera.zoom < 14 {
 			return
 		}
@@ -94,7 +97,6 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		path.addCoordinate(latlng[3])
 		path.addCoordinate(latlng[0])
 		
-		selectedPolyLine?.map = nil
 		selectedPolyLine = GMSPolyline(path: path)
 		selectedPolyLine?.strokeColor = UIColor.redColor()
 		selectedPolyLine?.strokeWidth = 5
@@ -103,13 +105,12 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 	
 	func mapView(mapView: GMSMapView!, didTapAtCoordinate coordinate: CLLocationCoordinate2D) {
 		let meshcode = Meshcode.latlngToMeshcode(coordinate, scale: MeshScale.Mesh5)
-		selectedMarker?.map = nil
-		selectedMarker = GMSMarker(position: coordinate)
-		selectedMarker?.snippet = "\(coordinate.latitude),\(coordinate.longitude)"
-		selectedMarker?.title = meshcode
-		selectedMarker?.map = googleMap
-		
-		selectedMeshCode = meshcode
+		if selectedMeshCode == meshcode {
+			selectedMeshCode = nil
+		} else {
+			selectedMeshCode = meshcode
+		}
+		print(meshcode)
 		
 		reloadLines()
 		
