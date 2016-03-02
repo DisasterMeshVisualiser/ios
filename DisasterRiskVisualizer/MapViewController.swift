@@ -36,6 +36,29 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		googleMap.settings.tiltGestures = false
 	}
 	
+	func mapView(mapView: GMSMapView!, idleAtCameraPosition position: GMSCameraPosition!) {
+		resetCameraPosition(position)
+	}
+	
+	func resetCameraPosition(position: GMSCameraPosition) {
+		var targetLat = position.target.latitude
+		var targetLng = position.target.longitude
+		
+		if targetLat < 20 {
+			targetLat = 20
+		}
+		if 46 < targetLat {
+			targetLat = 46
+		}
+		if targetLng < 122 {
+			targetLng = 122
+		}
+		if 156 < targetLng {
+			targetLng = 156
+		}
+		googleMap.animateToLocation(CLLocationCoordinate2DMake(targetLat, targetLng))
+	}
+	
 	func mapView(mapView: GMSMapView!, didChangeCameraPosition position: GMSCameraPosition!) {
 		for line in latlngLines {
 			line.map = nil
@@ -58,8 +81,8 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 			if Double(i) / 320 < minLng - 0.05 { continue }
 			if maxLng < Double(i) / 320 { continue }
 			let path = GMSMutablePath()
-			path.addCoordinate(CLLocationCoordinate2DMake(minLat - 1, Double(i) / 320))
-			path.addCoordinate(CLLocationCoordinate2DMake(maxLat + 1, Double(i) / 320))
+			path.addCoordinate(CLLocationCoordinate2DMake(max(minLat - 1, 20), Double(i) / 320))
+			path.addCoordinate(CLLocationCoordinate2DMake(min(maxLat + 1, 46), Double(i) / 320))
 			let line = GMSPolyline(path: path)
 			line.strokeColor = UIColor.brownColor()
 			line.strokeWidth = 1
@@ -70,8 +93,8 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 			if Double(i) / 480 < minLat { continue }
 			if maxLat < Double(i) / 480 { continue }
 			let path = GMSMutablePath()
-			path.addCoordinate(CLLocationCoordinate2DMake(Double(i) / 480, minLng - 1))
-			path.addCoordinate(CLLocationCoordinate2DMake(Double(i) / 480, maxLng + 1))
+			path.addCoordinate(CLLocationCoordinate2DMake(Double(i) / 480, max(minLng - 1, 122.0)))
+			path.addCoordinate(CLLocationCoordinate2DMake(Double(i) / 480, min(maxLng + 1, 154.0)))
 			let line = GMSPolyline(path: path)
 			line.strokeColor = UIColor.brownColor()
 			line.strokeWidth = 1
