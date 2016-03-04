@@ -13,6 +13,7 @@ import CoreLocation
 class MapViewController: UIViewController, GMSMapViewDelegate {
 	
 	@IBOutlet weak var googleMap: GMSMapView!
+	@IBOutlet weak var toolbar: UIToolbar!
 	
 	var selectedPolyLine: GMSPolyline?
 	var selectedMarker: GMSMarker?
@@ -34,6 +35,15 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		googleMap.settings.rotateGestures = false
 		googleMap.settings.indoorPicker = false
 		googleMap.settings.tiltGestures = false
+	}
+	
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
+		toolbar.tintColor = UIColor.blackColor()
+		toolbar.barTintColor = UIColor.lightGrayColor()
+        self.navigationController?.navigationBar.tintColor = UIColor.blackColor()
+        self.navigationController?.navigationBar.barTintColor = UIColor.lightGrayColor()
+		
 	}
 	
 	func mapView(mapView: GMSMapView!, idleAtCameraPosition position: GMSCameraPosition!) {
@@ -127,12 +137,16 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 	}
 	
 	func mapView(mapView: GMSMapView!, didTapAtCoordinate coordinate: CLLocationCoordinate2D) {
-		let meshcode = Meshcode.latlngToMeshcode(coordinate, scale: MeshScale.Mesh5)
-		if selectedMeshCode == meshcode {
-			selectedMeshCode = nil
-		} else {
-			selectedMeshCode = meshcode
+		selectedMeshCode = nil
+		if coordinate.latitude < 20 || 46 < coordinate.latitude {
+			return
 		}
+		if coordinate.longitude < 122 || 156 < coordinate.longitude {
+			return
+		}
+		
+		let meshcode = Meshcode.latlngToMeshcode(coordinate, scale: MeshScale.Mesh5)
+		selectedMeshCode = meshcode
 		print(meshcode)
 		
 		reloadLines()
