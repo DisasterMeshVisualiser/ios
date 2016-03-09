@@ -10,33 +10,31 @@ import UIKit
 import Alamofire
 import SwiftyJSON
 
+protocol LayerSelectDelegate {
+	func didSelectedLayer(meshTypes: [MeshType])
+}
+
 class LayerSelectViewController: UITableViewController {
-	var datalist = [DRVApi]()
-	
+	var meshTypes = [MeshType]()
+	var delegate: LayerSelectDelegate?
 	
 	override func viewDidLoad() {
 		super.viewDidLoad()
         self.navigationController?.navigationBar.translucent = false
 		
 		title = "表示するデータを選択"
-		navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "closeTable")
+		navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.Done, target: self, action: "doneButtonTapped")
 		reload()
 	}
 	
-	override func viewWillAppear(animated: Bool) {
-		super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.tintColor = UIColor.blackColor()
-        self.navigationController?.navigationBar.barTintColor = UIColor.lightGrayColor()
-	}
-	
 	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier("dataListCell")
-		cell?.textLabel?.text = datalist[indexPath.row].label
-		return cell!
+		let cell = tableView.dequeueReusableCellWithIdentifier("dataListCell")!
+		cell.textLabel?.text = meshTypes[indexPath.row].label
+		return cell
 	}
 	
 	override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return datalist.count
+		return meshTypes.count
 	}
 	
 	override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
@@ -50,31 +48,29 @@ class LayerSelectViewController: UITableViewController {
 	}
 	
 	func reload() {
+		self.meshTypes.removeAll()
 		Alamofire.request(.GET, "http://www.ninten320.com/datalist.json").response { (request, response, data, error) -> Void in
-			self.datalist.removeAll()
-			if let data = data {
-				var jsonData = JSON(data: data)
-				for (_, subJson) in jsonData["data"]{
-					let label = subJson["label"].stringValue
-					let name = subJson["label"].stringValue
-					let api = DRVApi(name: name, label: label)
-					self.datalist.append(api)
-				}
-				self.tableView.reloadData()
+			guard let data = data else { return }
+			var jsonData = JSON(data: data)
+			for (_, subJson) in jsonData["data"]{
+				let label = subJson["label"].stringValue
+				let name = subJson["name"].stringValue
+				let meshType = MeshType(name: name, label: label)
+				self.meshTypes.append(meshType)
 			}
+			self.tableView.reloadData()
 		}
 	}
 	
-	func closeTable() {
-		var selectedData = [String]()
+	func doneButtonTapped() {
+		var selectedData = [MeshType]()
 		for i in 0..<tableView.numberOfRowsInSection(0) {
 			let cell = tableView.cellForRowAtIndexPath(NSIndexPath(forRow: i, inSection: 0))
 			if cell?.accessoryType == UITableViewCellAccessoryType.Checkmark {
-				selectedData.append(datalist[i].label)
+				selectedData.append(meshTypes[i])
 			}
 		}
-		print(selectedData)
+		(navigationController?.viewControllers[0] as! MapViewController).meshTypes = selectedData
 		navigationController?.popViewControllerAnimated(true)
-		
 	}
 }

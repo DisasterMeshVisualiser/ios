@@ -15,6 +15,8 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 	@IBOutlet weak var googleMap: GMSMapView!
 	@IBOutlet weak var toolbar: UIToolbar!
 	
+	var meshTypes = [MeshType]()
+	
 	var selectedPolyLine: GMSPolyline?
 	var selectedMarker: GMSMarker?
 	var selectedMeshCode: String?
@@ -22,8 +24,15 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 	var latlngLines = [GMSPolyline]()
 	var detailLatlngLines = [GMSPolyline]()
 	
+	var meshPolygons = [GMSPolygon]()
+	
 	override func viewDidLoad() {
 		super.viewDidLoad()
+		toolbar.tintColor = UIColor.blackColor()
+		toolbar.barTintColor = UIColor.lightGrayColor()
+        self.navigationController?.navigationBar.tintColor = UIColor.blackColor()
+        self.navigationController?.navigationBar.barTintColor = UIColor.lightGrayColor()
+		
 		googleMap.delegate = self
 		
 		let target = CLLocationCoordinate2DMake(38.258595, 137.6850225)
@@ -37,17 +46,58 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		googleMap.settings.tiltGestures = false
 	}
 	
-	override func viewWillAppear(animated: Bool) {
-		super.viewWillAppear(animated)
-		toolbar.tintColor = UIColor.blackColor()
-		toolbar.barTintColor = UIColor.lightGrayColor()
-        self.navigationController?.navigationBar.tintColor = UIColor.blackColor()
-        self.navigationController?.navigationBar.barTintColor = UIColor.lightGrayColor()
-		
+	func mapView(mapView: GMSMapView!, didChangeCameraPosition position: GMSCameraPosition!) {
+		createLatLngLine()
+		reloadLines()
 	}
 	
 	func mapView(mapView: GMSMapView!, idleAtCameraPosition position: GMSCameraPosition!) {
 		resetCameraPosition(position)
+		loadMeshData()
+		createLatLngLine()
+		reloadLines()
+	}
+	
+	func loadMeshData() {
+		if googleMap.camera.zoom < 14 { return }
+		for polygon in meshPolygons {
+			polygon.map = nil
+		}
+		meshPolygons.removeAll()
+		let region = googleMap.projection.visibleRegion()
+		let minLat = region.nearLeft.latitude
+		let maxLat = region.farRight.latitude
+		let minLng = region.nearLeft.longitude
+		let maxLng = region.farRight.longitude
+		
+		for i in 122 * 320...154 * 320 {
+			if Double(i) / 320 < minLng - 0.01 { continue }
+			if maxLng + 0.01 < Double(i) / 320 { continue }
+			for j in 20 * 480...46 * 480 {
+				if Double(j) / 480 < minLat - 0.01 { continue }
+				if maxLat + 0.01 < Double(j) / 480 { continue }
+				let coordinate = CLLocationCoordinate2DMake(Double(j) / 480 + 0.001, Double(i) / 320 + 0.001)
+				let meshcode = Meshcode.latlngToMeshcode(coordinate, scale: .Mesh5)
+				let region = Meshcode.meshcodeToRegion(meshcode, scale: .Mesh5)
+				showMeshData(region)
+			}
+		}
+	}
+	
+	func showMeshData(region: GMSVisibleRegion) {
+		if googleMap.camera.zoom < 14 {
+			return
+		}
+		let path = GMSMutablePath()
+		path.addCoordinate(region.farLeft)
+		path.addCoordinate(region.farRight)
+		path.addCoordinate(region.nearRight)
+		path.addCoordinate(region.nearLeft)
+
+		let polygon = GMSPolygon(path: path)
+		polygon.fillColor = UIColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 0.0)
+		polygon.map = googleMap
+		meshPolygons.append(polygon)
 	}
 	
 	func resetCameraPosition(position: GMSCameraPosition) {
@@ -69,18 +119,15 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		googleMap.animateToLocation(CLLocationCoordinate2DMake(targetLat, targetLng))
 	}
 	
-	func mapView(mapView: GMSMapView!, didChangeCameraPosition position: GMSCameraPosition!) {
+	
+	func createLatLngLine() {
 		for line in latlngLines {
 			line.map = nil
 		}
 		latlngLines.removeAll()
-		if position.zoom >= 14 {
-			createLatLngLine()
+		if googleMap.camera.zoom < 14 {
+			return
 		}
-		reloadLines()
-	}
-	
-	func createLatLngLine() {
 		let region = googleMap.projection.visibleRegion()
 		let minLat = region.nearLeft.latitude
 		let maxLat = region.farRight.latitude
@@ -89,7 +136,7 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		
 		for i in 122 * 320...154 * 320 {
 			if Double(i) / 320 < minLng - 0.05 { continue }
-			if maxLng < Double(i) / 320 { continue }
+			if maxLng + 0.05 < Double(i) / 320 { continue }
 			let path = GMSMutablePath()
 			path.addCoordinate(CLLocationCoordinate2DMake(max(minLat - 1, 20), Double(i) / 320))
 			path.addCoordinate(CLLocationCoordinate2DMake(min(maxLat + 1, 46), Double(i) / 320))
@@ -100,8 +147,8 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 			latlngLines.append(line)
 		}
 		for i in 20 * 480...46 * 480 {
-			if Double(i) / 480 < minLat { continue }
-			if maxLat < Double(i) / 480 { continue }
+			if Double(i) / 480 < minLat - 0.05 { continue }
+			if maxLat + 0.05 < Double(i) / 480 { continue }
 			let path = GMSMutablePath()
 			path.addCoordinate(CLLocationCoordinate2DMake(Double(i) / 480, max(minLng - 1, 122.0)))
 			path.addCoordinate(CLLocationCoordinate2DMake(Double(i) / 480, min(maxLng + 1, 154.0)))
@@ -122,13 +169,13 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		if googleMap.camera.zoom < 14 {
 			return
 		}
-		var latlng = Meshcode.meshcodeToLatlng(meshcode, scale: .Mesh5)
+		let region = Meshcode.meshcodeToRegion(meshcode, scale: .Mesh5)
 		let path = GMSMutablePath()
-		path.addCoordinate(latlng[0])
-		path.addCoordinate(latlng[1])
-		path.addCoordinate(latlng[2])
-		path.addCoordinate(latlng[3])
-		path.addCoordinate(latlng[0])
+		path.addCoordinate(region.farLeft)
+		path.addCoordinate(region.farRight)
+		path.addCoordinate(region.nearRight)
+		path.addCoordinate(region.nearLeft)
+		path.addCoordinate(region.farLeft)
 		
 		selectedPolyLine = GMSPolyline(path: path)
 		selectedPolyLine?.strokeColor = UIColor.redColor()

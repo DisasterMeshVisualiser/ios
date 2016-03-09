@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import GoogleMaps
 import CoreLocation
 
 enum MeshScale {
@@ -15,7 +16,7 @@ enum MeshScale {
 
 class Meshcode {
 	
-	static func meshcodeToLatlng(meshcode: String, scale: MeshScale) -> [CLLocationCoordinate2D] {
+	static func meshcodeToRegion(meshcode: String, scale: MeshScale) -> GMSVisibleRegion {
 		let length = meshcode.characters.count
 		var lat = 0.0
 		var lng = 0.0
@@ -24,21 +25,21 @@ class Meshcode {
 		lat = a / 1.5
 		lng = d + 100
 		if (length == 4 || scale == .Mesh1) {
-			return calcCoordinates(lat: lat, lng: lng, latD: 2.0 / 3, lngD: 1)
+			return calcRegion(lat: lat, lng: lng, latD: 2.0 / 3, lngD: 1)
 		}
 		let b = Double((meshcode as NSString).substringWithRange(NSRange(location: 4, length: 1)))!
 		let e = Double((meshcode as NSString).substringWithRange(NSRange(location: 5, length: 1)))!
 		lat += b * 5 / 60
 		lng += e * 7.5 / 60
 		if (length == 6 || scale == .Mesh2) {
-			return calcCoordinates(lat: lat, lng: lng, latD: 5.0 / 60, lngD: 7.5 / 60)
+			return calcRegion(lat: lat, lng: lng, latD: 5.0 / 60, lngD: 7.5 / 60)
 		}
 		let c = Double((meshcode as NSString).substringWithRange(NSRange(location: 6, length: 1)))!
 		let f = Double((meshcode as NSString).substringWithRange(NSRange(location: 7, length: 1)))!
 		lat += c * 30 / 3600
 		lng += f * 45 / 3600
 		if (length == 8 || scale == .Mesh3) {
-			return calcCoordinates(lat: lat, lng: lng, latD: 30.0 / 3600, lngD: 45.0 / 3600)
+			return calcRegion(lat: lat, lng: lng, latD: 30.0 / 3600, lngD: 45.0 / 3600)
 		}
 		let g = Double((meshcode as NSString).substringWithRange(NSRange(location: 8, length: 1)))!
 		if g == 3 || g == 4 {
@@ -48,7 +49,7 @@ class Meshcode {
 			lng += 22.5 / 3600
 		}
 		if (length == 9 || scale == .Mesh4) {
-			return calcCoordinates(lat: lat, lng: lng, latD: 15.0 / 3600, lngD: 22.5 / 3600)
+			return calcRegion(lat: lat, lng: lng, latD: 15.0 / 3600, lngD: 22.5 / 3600)
 		}
 		let h = Double((meshcode as NSString).substringWithRange(NSRange(location: 9, length: 1)))!
 		if h == 3 || h == 4 {
@@ -58,21 +59,18 @@ class Meshcode {
 			lng += 11.25 / 3600
 		}
 		if (length == 10 || scale == .Mesh5) {
-			return calcCoordinates(lat: lat, lng: lng, latD: 7.5 / 3600, lngD: 11.25 / 3600)
+			return calcRegion(lat: lat, lng: lng, latD: 7.5 / 3600, lngD: 11.25 / 3600)
 		}
-		return []
+		return GMSVisibleRegion()
 
 	}
 	
-	private static func calcCoordinates(lat lat: Double, lng: Double, latD: Double, lngD: Double) -> [CLLocationCoordinate2D] {
-		latD
-		lngD
-		var coordinates = [CLLocationCoordinate2D]()
-		coordinates.append(CLLocationCoordinate2DMake(lat, lng))
-		coordinates.append(CLLocationCoordinate2DMake(lat + latD, lng))
-		coordinates.append(CLLocationCoordinate2DMake(lat + latD, lng + lngD))
-		coordinates.append(CLLocationCoordinate2DMake(lat, lng + lngD))
-		return coordinates
+	private static func calcRegion(lat lat: Double, lng: Double, latD: Double, lngD: Double) -> GMSVisibleRegion {
+		let nearLeft = (CLLocationCoordinate2DMake(lat, lng))
+		let farLeft = (CLLocationCoordinate2DMake(lat + latD, lng))
+		let farRight = (CLLocationCoordinate2DMake(lat + latD, lng + lngD))
+		let nearRight = (CLLocationCoordinate2DMake(lat, lng + lngD))
+		return GMSVisibleRegion(nearLeft: nearLeft, nearRight: nearRight, farLeft: farLeft, farRight: farRight)
 	}
 	
 	static func latlngToMeshcode(coordinate: CLLocationCoordinate2D, scale: MeshScale) -> String {
@@ -115,5 +113,20 @@ class Meshcode {
 		case .Mesh5:
 			return "\(Int(p))\(Int(u))\(Int(q))\(Int(v))\(Int(r))\(Int(w))\(Int(m))\(Int(n))"
 		}
+	}
+}
+
+extension GMSVisibleRegion {
+	var farLeftMesh: String {
+		return Meshcode.latlngToMeshcode(farLeft, scale: MeshScale.Mesh5)
+	}
+	var farRightMesh: String {
+		return Meshcode.latlngToMeshcode(farRight, scale: MeshScale.Mesh5)
+	}
+	var nearLeftMesh: String {
+		return Meshcode.latlngToMeshcode(nearLeft, scale: MeshScale.Mesh5)
+	}
+	var nearRightMesh: String {
+		return Meshcode.latlngToMeshcode(nearRight, scale: MeshScale.Mesh5)
 	}
 }

@@ -1,5 +1,5 @@
 //
-//  DRVApi.swift
+//  MeshType.swift
 //  DisasterRiskVisualizer
 //
 //  Created by hyuga on 3/4/16.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-struct DRVApi {
+struct MeshType {
 	var name: String
 	var label: String
 }
