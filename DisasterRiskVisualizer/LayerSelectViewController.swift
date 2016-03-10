@@ -29,7 +29,7 @@ class LayerSelectViewController: UITableViewController {
 	
 	override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCellWithIdentifier("dataListCell")!
-		cell.textLabel?.text = meshTypes[indexPath.row].label
+		cell.textLabel?.text = meshTypes[indexPath.row].name
 		return cell
 	}
 	
@@ -49,13 +49,14 @@ class LayerSelectViewController: UITableViewController {
 	
 	func reload() {
 		self.meshTypes.removeAll()
-		Alamofire.request(.GET, "http://www.ninten320.com/datalist.json").response { (request, response, data, error) -> Void in
+		Alamofire.request(.GET, "http://mesh.cps.im.dendai.ac.jp/api/v1/mesh_type.json").response { (request, response, data, error) -> Void in
 			guard let data = data else { return }
 			var jsonData = JSON(data: data)
 			for (_, subJson) in jsonData["data"]{
+				let id = subJson["id"].intValue
 				let label = subJson["label"].stringValue
 				let name = subJson["name"].stringValue
-				let meshType = MeshType(name: name, label: label)
+				let meshType = MeshType(id: id, name: name, label: label)
 				self.meshTypes.append(meshType)
 			}
 			self.tableView.reloadData()

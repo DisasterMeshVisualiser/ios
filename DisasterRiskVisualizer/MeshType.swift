@@ -9,6 +9,7 @@
 import UIKit
 
 struct MeshType {
+	var id: Int
 	var name: String
 	var label: String
 }

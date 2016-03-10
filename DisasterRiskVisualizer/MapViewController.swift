@@ -9,6 +9,8 @@
 import UIKit
 import GoogleMaps
 import CoreLocation
+import Alamofire
+import SwiftyJSON
 
 class MapViewController: UIViewController, GMSMapViewDelegate {
 	
@@ -32,18 +34,21 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		toolbar.barTintColor = UIColor.lightGrayColor()
         self.navigationController?.navigationBar.tintColor = UIColor.blackColor()
         self.navigationController?.navigationBar.barTintColor = UIColor.lightGrayColor()
-		
 		googleMap.delegate = self
-		
-		let target = CLLocationCoordinate2DMake(38.258595, 137.6850225)
-		let camera = GMSCameraPosition.cameraWithTarget(target, zoom: 4.5)
+		let target = CLLocationCoordinate2DMake(35.748519, 139.80354)
+		let camera = GMSCameraPosition.cameraWithTarget(target, zoom: 15)
 		googleMap.camera = camera
 		googleMap.myLocationEnabled = true
 		googleMap.settings.myLocationButton = true
-		googleMap.setMinZoom(4, maxZoom: 21)
+		googleMap.setMinZoom(14, maxZoom: 22)
 		googleMap.settings.rotateGestures = false
 		googleMap.settings.indoorPicker = false
 		googleMap.settings.tiltGestures = false
+	}
+	
+	override func viewWillAppear(animated: Bool) {
+		super.viewWillAppear(animated)
+		loadMeshData()
 	}
 	
 	func mapView(mapView: GMSMapView!, didChangeCameraPosition position: GMSCameraPosition!) {
@@ -53,41 +58,32 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 	
 	func mapView(mapView: GMSMapView!, idleAtCameraPosition position: GMSCameraPosition!) {
 		resetCameraPosition(position)
-		loadMeshData()
 		createLatLngLine()
 		reloadLines()
 	}
 	
 	func loadMeshData() {
-		if googleMap.camera.zoom < 14 { return }
 		for polygon in meshPolygons {
 			polygon.map = nil
 		}
 		meshPolygons.removeAll()
-		let region = googleMap.projection.visibleRegion()
-		let minLat = region.nearLeft.latitude
-		let maxLat = region.farRight.latitude
-		let minLng = region.nearLeft.longitude
-		let maxLng = region.farRight.longitude
-		
-		for i in 122 * 320...154 * 320 {
-			if Double(i) / 320 < minLng - 0.01 { continue }
-			if maxLng + 0.01 < Double(i) / 320 { continue }
-			for j in 20 * 480...46 * 480 {
-				if Double(j) / 480 < minLat - 0.01 { continue }
-				if maxLat + 0.01 < Double(j) / 480 { continue }
-				let coordinate = CLLocationCoordinate2DMake(Double(j) / 480 + 0.001, Double(i) / 320 + 0.001)
-				let meshcode = Meshcode.latlngToMeshcode(coordinate, scale: .Mesh5)
-				let region = Meshcode.meshcodeToRegion(meshcode, scale: .Mesh5)
-				showMeshData(region)
+		for meshType in meshTypes {
+			Alamofire.request(.GET, "http://mesh.cps.im.dendai.ac.jp/api/v1/mesh.json?mesh_type=\(meshType.id)").response { (request, response, data, error) -> Void in
+				guard let data = data else { return }
+				var jsonData = JSON(data: data)
+				for (_, subJson) in jsonData["data"]{
+					let meshcode = subJson["meshcode"].stringValue
+					var region = Meshcode.meshcodeToRegion(meshcode, scale: .Mesh5)
+					let value = subJson["value"].doubleValue
+					self.showMeshData(region, value: value * 2)
+					print(meshcode)
+					print(value)
+				}
 			}
 		}
 	}
 	
-	func showMeshData(region: GMSVisibleRegion) {
-		if googleMap.camera.zoom < 14 {
-			return
-		}
+	func showMeshData(region: GMSVisibleRegion, value: Double) {
 		let path = GMSMutablePath()
 		path.addCoordinate(region.farLeft)
 		path.addCoordinate(region.farRight)
@@ -95,7 +91,7 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		path.addCoordinate(region.nearLeft)
 
 		let polygon = GMSPolygon(path: path)
-		polygon.fillColor = UIColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 0.0)
+		polygon.fillColor = UIColor(red: 1.0, green: 0.0, blue: 0.0, alpha: CGFloat(value))
 		polygon.map = googleMap
 		meshPolygons.append(polygon)
 	}
