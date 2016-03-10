@@ -73,9 +73,9 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 				var jsonData = JSON(data: data)
 				for (_, subJson) in jsonData["data"]{
 					let meshcode = subJson["meshcode"].stringValue
-					var region = Meshcode.meshcodeToRegion(meshcode, scale: .Mesh5)
+					let region = Meshcode.meshcodeToRegion(meshcode, scale: .Mesh5)
 					let value = subJson["value"].doubleValue
-					self.showMeshData(region, value: value * 2)
+					self.showMeshData(region, value: value)
 					print(meshcode)
 					print(value)
 				}
@@ -187,10 +187,8 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		if coordinate.longitude < 122 || 156 < coordinate.longitude {
 			return
 		}
-		
 		let meshcode = Meshcode.latlngToMeshcode(coordinate, scale: MeshScale.Mesh5)
 		selectedMeshCode = meshcode
-		print(meshcode)
 		
 		reloadLines()
 		
