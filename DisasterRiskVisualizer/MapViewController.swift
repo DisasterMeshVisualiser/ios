@@ -40,7 +40,7 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 		googleMap.camera = camera
 		googleMap.myLocationEnabled = true
 		googleMap.settings.myLocationButton = true
-		googleMap.setMinZoom(14, maxZoom: 22)
+		googleMap.setMinZoom(10, maxZoom: 22)
 		googleMap.settings.rotateGestures = false
 		googleMap.settings.indoorPicker = false
 		googleMap.settings.tiltGestures = false
@@ -75,9 +75,7 @@ class MapViewController: UIViewController, GMSMapViewDelegate {
 					let meshcode = subJson["meshcode"].stringValue
 					let region = Meshcode.meshcodeToRegion(meshcode, scale: .Mesh5)
 					let value = subJson["value"].doubleValue
-					self.showMeshData(region, value: value)
-					print(meshcode)
-					print(value)
+					self.showMeshData(region, value: value / Double(self.meshTypes.count))
 				}
 			}
 		}
